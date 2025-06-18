@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Recommendation System</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.products-section, .recommendations-section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.products-section h2, .recommendations-section h2 {
+    margin-bottom: 20px;
+    color: #4a5568;
+    font-size: 1.8rem;
+}
+
+.products-grid, .recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.product-card, .recommendation-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.product-card:hover, .recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border-color: #667eea;
+}
+
+.product-card.clicked {
+    border-color: #667eea;
+    background: #e6fffa;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.product-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+.product-category {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #38a169;
+    margin-bottom: 8px;
+}
+
+.product-description {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.rating-stars {
+    color: #fbbf24;
+}
+
+.recommendation-reason {
+    background: #edf2f7;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #4a5568;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #4a5568;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error {
+    background: #fed7d7;
+    color: #c53030;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .products-grid, .recommendations-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    <header class="main-header" style="width:100%;position:fixed;top:0;left:0;z-index:1000;background:#667eea;color:white;padding:18px 0;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.7rem;letter-spacing:1px;">
+        <span style="font-weight:bold;">Real-Time Product Recommendations</span>
+        <span style="font-size:1.1rem;margin-left:18px;font-weight:normal;opacity:0.85;">| ibn zohr</span>
+    </header>
+    <div style="height:70px;"></div> <!-- Spacer for fixed header -->
+    <div class="container">
+        <header>
+            <h1>Real-Time Product Recommendations</h1>
+            <p>Click on any product to see real-time recommendations!</p>
+        </header>
+        
+        <main>
+            <div class="products-section">
+                <h2>Products</h2>
+                <input type="text" id="product-search" placeholder="Search products..." style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 1rem;">
+                <div id="products-grid" class="products-grid">
+                    <!-- Products will be loaded here -->
+                </div>
+                <button id="show-more-btn" style="display:none; margin: 20px auto 0; padding: 10px 30px; border-radius: 8px; background: #667eea; color: white; border: none; font-size: 1rem; cursor: pointer;">Show More</button>
+            </div>
+            <div class="recommendations-section" id="recommendations-section" style="display: none;">
+                <h2>Recommendations</h2>
+                <div id="recommendations-grid" class="recommendations-grid">
+                    <!-- Recommendations will be loaded here -->
+                </div>
+            </div>
+            <section id="rate-us-section" style="margin:40px 0 0 0;background:#f8fafc;padding:24px 18px;border-radius:12px;box-shadow:0 2px 8px rgba(102,126,234,0.08);text-align:center;">
+                <h3 style="color:#4a5568;font-size:1.3rem;margin-bottom:12px;">Rate Us</h3>
+                <form id="rate-us-form" style="display:inline-block;max-width:400px;">
+                    <div style="margin-bottom:12px;">
+                        <span id="star-rating" style="font-size:2rem;cursor:pointer;user-select:none;">
+                            <span data-value="1" class="star">&#9734;</span>
+                            <span data-value="2" class="star">&#9734;</span>
+                            <span data-value="3" class="star">&#9734;</span>
+                            <span data-value="4" class="star">&#9734;</span>
+                            <span data-value="5" class="star">&#9734;</span>
+                        </span>
+                    </div>
+                    <input type="hidden" id="rating" name="rating" value="">
+                    <div style="margin-bottom:12px;">
+                        <textarea id="rate-comment" name="comment" rows="3" placeholder="Add a comment..." style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:1rem;resize:vertical;" required></textarea>
+                    </div>
+                    <button type="submit" style="background:#667eea;color:white;padding:6px 18px;border:none;border-radius:6px;cursor:pointer;font-size:1rem;">Submit</button>
+                </form>
+                <div id="rate-us-message" style="margin-top:10px;color:#38a169;font-weight:bold;display:none;"></div>
+            </section>
+        </main>
+    </div>
+    <footer class="main-footer" style="width:100%;background:#4a5568;color:white;text-align:center;padding:18px 0;position:fixed;left:0;bottom:0;z-index:1000;font-size:1rem;box-shadow:0 -2px 8px rgba(0,0,0,0.08);">
+        <div>&copy; 2024 Real-Time Recommendation System. All rights reserved.</div>
+        <div style="margin-top:6px;font-size:0.98rem;">
+            Contact: <a href="mailto:contact@ibnzohr.ma" style="color:#e2e8f0;text-decoration:underline;">contact@ibnzohr.ma</a> |
+            Tel: <a href="tel:+212600000000" style="color:#e2e8f0;text-decoration:underline;">+212 6 00 00 00 00</a>
+        </div>
+    </footer>
+    <div style="height:60px;"></div> <!-- Spacer for fixed footer -->
+    <script>
+class RecommendationApp {
+    constructor() {
+        this.products = [];
+        this.filteredProducts = [];
+        this.selectedProduct = null;
+        this.productsToShow = 6;
+        this.init();
+    }
+    
+    async init() {
+        await this.loadProducts();
+        this.setupEventListeners();
+    }
+    
+    async loadProducts() {
+        try {
+            const response = await fetch('/api/products');
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                this.products = data.products;
+                this.filteredProducts = this.products;
+                this.renderProducts();
+            } else {
+                this.showError('Failed to load products');
+            }
+        } catch (error) {
+            this.showError('Error loading products: ' + error.message);
+        }
+    }
+    
+    renderProducts() {
+        const productsGrid = document.getElementById('products-grid');
+        const showMoreBtn = document.getElementById('show-more-btn');
+        productsGrid.innerHTML = '';
+        
+        const productsToDisplay = this.filteredProducts.slice(0, this.productsToShow);
+        productsToDisplay.forEach(product => {
+            const productCard = this.createProductCard(product);
+            productsGrid.appendChild(productCard);
+        });
+        
+        // Show or hide the Show More button
+        if (this.filteredProducts.length > this.productsToShow) {
+            showMoreBtn.style.display = 'block';
+        } else {
+            showMoreBtn.style.display = 'none';
+        }
+    }
+    
+    createProductCard(product) {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.productId = product.id;
+        card.dataset.category = product.category;
+        
+        const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
+        
+        card.innerHTML = `
+            <div class="product-name">${product.name}</div>
+            <div class="product-category">${product.category}</div>
+            <div class="product-price">$${product.price}</div>
+            <div class="product-description">${product.description}</div>
+            <div class="product-rating">
+                <span class="rating-stars">${stars}</span>
+                <span>(${product.rating})</span>
+            </div>
+        `;
+        
+        card.addEventListener('click', () => this.handleProductClick(product));
+        
+        return card;
+    }
+    
+    async handleProductClick(product) {
+        // Visual feedback
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.classList.remove('clicked');
+        });
+        document.querySelector(`[data-product-id="${product.id}"]`).classList.add('clicked');
+        
+        this.selectedProduct = product;
+        
+        // Track click event
+        await this.trackClick(product.id, product.category);
+        
+        // Get and display recommendations
+        await this.loadRecommendations(product.id);
+    }
+    
+    async trackClick(productId, category) {
+        try {
+            const response = await fetch('/api/track-click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    category: category
+                })
+            });
+            
+            const data = await response.json();
+            if (data.status !== 'success') {
+                console.warn('Failed to track click:', data.message);
+            }
+        } catch (error) {
+            console.error('Error tracking click:', error);
+        }
+    }
+    
+    async loadRecommendations(productId) {
+        const recommendationsSection = document.getElementById('recommendations-section');
+        const recommendationsGrid = document.getElementById('recommendations-grid');
+        
+        // Show loading state
+        recommendationsSection.style.display = 'block';
+        recommendationsGrid.innerHTML = '<div class="loading">Loading recommendations...</div>';
+        
+        try {
+            const response = await fetch(`/api/recommendations?product_id=${productId}&limit=6`);
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                this.renderRecommendations(data.recommendations);
+            } else {
+                this.showError('Failed to load recommendations');
+            }
+        } catch (error) {
+            this.showError('Error loading recommendations: ' + error.message);
+        }
+    }
+    
+    renderRecommendations(recommendations) {
+        const recommendationsGrid = document.getElementById('recommendations-grid');
+        recommendationsGrid.innerHTML = '';
+        
+        if (recommendations.length === 0) {
+            recommendationsGrid.innerHTML = '<div class="error">No recommendations found</div>';
+            return;
+        }
+        
+        recommendations.forEach(rec => {
+            const recCard = this.createRecommendationCard(rec);
+            recommendationsGrid.appendChild(recCard);
+        });
+    }
+    
+    createRecommendationCard(recommendation) {
+        const product = recommendation.product;
+        const card = document.createElement('div');
+        card.className = 'recommendation-card';
+        
+        const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
+        
+        card.innerHTML = `
+            <div class="product-name">${product.name}</div>
+            <div class="product-category">${product.category}</div>
+            <div class="product-price">$${product.price}</div>
+            <div class="product-description">${product.description}</div>
+            <div class="product-rating">
+                <span class="rating-stars">${stars}</span>
+                <span>(${product.rating})</span>
+            </div>
+            <div class="recommendation-reason">${recommendation.reason}</div>
+        `;
+        
+        card.addEventListener('click', () => this.handleProductClick(product));
+        
+        return card;
+    }
+    
+    showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error';
+        errorDiv.textContent = message;
+        
+        const container = document.querySelector('.container');
+        container.insertBefore(errorDiv, container.firstChild);
+        
+        setTimeout(() => {
+            errorDiv.remove();
+        }, 5000);
+    }
+    
+    setupEventListeners() {
+        // Add any additional event listeners here
+        window.addEventListener('beforeunload', () => {
+            // Cleanup if needed
+        });
+        
+        // Search bar event
+        const searchInput = document.getElementById('product-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.filterProducts(e.target.value);
+            });
+        }
+        // Show More button event
+        const showMoreBtn = document.getElementById('show-more-btn');
+        if (showMoreBtn) {
+            showMoreBtn.addEventListener('click', () => {
+                this.productsToShow += 6;
+                this.renderProducts();
+            });
+        }
+    }
+    
+    filterProducts(query) {
+        query = query.trim().toLowerCase();
+        if (!query) {
+            this.filteredProducts = this.products;
+        } else {
+            this.filteredProducts = this.products.filter(product =>
+                product.name.toLowerCase().includes(query) ||
+                product.category.toLowerCase().includes(query)
+            );
+        }
+        this.productsToShow = 6;
+        this.renderProducts();
+    }
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new RecommendationApp();
+    const rateForm = document.getElementById('rate-us-form');
+    const rateMsg = document.getElementById('rate-us-message');
+    const starRating = document.getElementById('star-rating');
+    const ratingInput = document.getElementById('rating');
+    let selectedRating = 0;
+    if (starRating) {
+        const stars = starRating.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const val = parseInt(this.getAttribute('data-value'));
+                highlightStars(val);
+            });
+            star.addEventListener('mouseout', function() {
+                highlightStars(selectedRating);
+            });
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = selectedRating;
+                highlightStars(selectedRating);
+            });
+        });
+        function highlightStars(rating) {
+            stars.forEach(star => {
+                if (parseInt(star.getAttribute('data-value')) <= rating) {
+                    star.innerHTML = '&#9733;'; // filled star
+                } else {
+                    star.innerHTML = '&#9734;'; // empty star
+                }
+            });
+        }
+    }
+    if (rateForm) {
+        rateForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const rating = ratingInput.value;
+            const comment = document.getElementById('rate-comment').value.trim();
+            if (!rating) {
+                rateMsg.textContent = 'Please select a star rating.';
+                rateMsg.style.color = '#c53030';
+                rateMsg.style.display = 'block';
+                return;
+            }
+            if (!comment) {
+                rateMsg.textContent = 'Please add a comment.';
+                rateMsg.style.color = '#c53030';
+                rateMsg.style.display = 'block';
+                return;
+            }
+            rateMsg.textContent = `Thank you for rating us ${rating} star${rating > 1 ? 's' : ''}!`;
+            rateMsg.style.color = '#38a169';
+            rateMsg.style.display = 'block';
+            rateForm.reset();
+            selectedRating = 0;
+            if (starRating) {
+                const stars = starRating.querySelectorAll('.star');
+                stars.forEach(star => star.innerHTML = '&#9734;');
+            }
+        });
+    }
+});
+    </script>
+</body>
+</html>

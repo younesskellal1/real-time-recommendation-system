@@ -1,0 +1,11 @@
+flask
+kafka-python
+redis
+pyflink
+requests
+flask-cors
+numpy
+scikit-learn
+grpcio
+grpcio-tools
+protobuf

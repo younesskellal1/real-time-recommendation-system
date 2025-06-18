@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package recommendation;
+
+// Service de recommandation
+service RecommendationService {
+  // Obtenir des recommandations pour un utilisateur
+  rpc GetRecommendations (RecommendationRequest) returns (RecommendationResponse) {}
+  
+  // Mettre à jour les préférences utilisateur
+  rpc UpdateUserPreferences (UserPreferences) returns (UpdateResponse) {}
+  
+  // Obtenir les produits tendance
+  rpc GetTrendingProducts (TrendingRequest) returns (TrendingResponse) {}
+}
+
+// Message pour la requête de recommandation
+message RecommendationRequest {
+  string user_id = 1;
+  int32 limit = 2;
+  repeated string categories = 3;
+}
+
+// Message pour la réponse de recommandation
+message RecommendationResponse {
+  repeated Product products = 1;
+  string status = 2;
+  string message = 3;
+}
+
+// Message pour les préférences utilisateur
+message UserPreferences {
+  string user_id = 1;
+  repeated string favorite_categories = 2;
+  map<string, float> category_weights = 3;
+}
+
+// Message pour la réponse de mise à jour
+message UpdateResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Message pour la requête de produits tendance
+message TrendingRequest {
+  string category = 1;
+  int32 limit = 2;
+}
+
+// Message pour la réponse de produits tendance
+message TrendingResponse {
+  repeated Product trending_products = 1;
+}
+
+// Message pour représenter un produit
+message Product {
+  string id = 1;
+  string name = 2;
+  string category = 3;
+  float score = 4;
+  map<string, string> metadata = 5;
+} 
