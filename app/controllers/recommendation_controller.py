@@ -12,12 +12,28 @@ class RecommendationController:
         self.kafka_producer = KafkaEventProducer()
     
     def get_products(self):
-        """Get all products"""
+        """Get all products with pagination and optional search by name"""
         try:
-            products = [product.to_dict() for product in PRODUCTS_DB]
+            page = request.args.get('page', default=1, type=int)
+            page_size = request.args.get('page_size', default=6, type=int)
+            search = request.args.get('search', default='', type=str).strip().lower()
+
+            # Filter products by name if search is provided
+            if search:
+                filtered_products = [product for product in PRODUCTS_DB if search in product.name.lower()]
+            else:
+                filtered_products = PRODUCTS_DB
+
+            total = len(filtered_products)
+            start = (page - 1) * page_size
+            end = start + page_size
+            products = [product.to_dict() for product in filtered_products[start:end]]
             return jsonify({
                 'status': 'success',
-                'products': products
+                'products': products,
+                'total': total,
+                'page': page,
+                'page_size': page_size
             })
         except Exception as e:
             return jsonify({

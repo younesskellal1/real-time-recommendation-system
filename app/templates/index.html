@@ -5,185 +5,218 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-Time Recommendation System</title>
     <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --main-bg: #fff;
+    --main-text: #333;
+    --header-bg: #667eea;
+    --header-text: #fff;
+    --section-bg: #fff;
+    --section-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    --card-bg: #f8fafc;
+    --card-border: #e2e8f0;
+    --card-hover: #e6fffa;
+    --card-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    --category-bg: #667eea;
+    --category-text: #fff;
+    --price: #38a169;
+    --desc: #4a5568;
+    --star: #fbbf24;
+    --recommend-bg: #edf2f7;
+    --recommend-text: #4a5568;
+    --loading: #4a5568;
+    --error-bg: #fed7d7;
+    --error-text: #c53030;
+    --footer-bg: #4a5568;
+    --footer-text: #fff;
+    --footer-link: #e2e8f0;
 }
-
+body.dark-mode {
+    --bg-gradient: linear-gradient(135deg, #232526 0%, #414345 100%);
+    --main-bg: #18191a;
+    --main-text: #e4e6eb;
+    --header-bg: #232526;
+    --header-text: #e4e6eb;
+    --section-bg: #232526;
+    --section-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    --card-bg: #242526;
+    --card-border: #393a3b;
+    --card-hover: #2a2d31;
+    --card-shadow: 0 0 20px rgba(35, 37, 38, 0.3);
+    --category-bg: #414345;
+    --category-text: #e4e6eb;
+    --price: #4fd1c5;
+    --desc: #b0b3b8;
+    --star: #fbbf24;
+    --recommend-bg: #23272b;
+    --recommend-text: #b0b3b8;
+    --loading: #b0b3b8;
+    --error-bg: #4b1e1e;
+    --error-text: #f56565;
+    --footer-bg: #232526;
+    --footer-text: #e4e6eb;
+    --footer-link: #63b3ed;
+}
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-gradient);
     min-height: 100vh;
-    color: #333;
+    color: var(--main-text);
 }
-
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
-
 header {
     text-align: center;
     margin-bottom: 40px;
-    color: white;
+    color: var(--header-text);
 }
-
 header h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
-
 header p {
     font-size: 1.2rem;
     opacity: 0.9;
 }
-
 .products-section, .recommendations-section {
-    background: white;
+    background: var(--section-bg);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: var(--section-shadow);
 }
-
 .products-section h2, .recommendations-section h2 {
     margin-bottom: 20px;
-    color: #4a5568;
+    color: var(--desc);
     font-size: 1.8rem;
 }
-
 .products-grid, .recommendations-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
-
 .product-card, .recommendation-card {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: #f8fafc;
+    background: var(--card-bg);
 }
-
 .product-card:hover, .recommendation-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    border-color: #667eea;
+    box-shadow: var(--card-shadow);
+    border-color: var(--header-bg);
 }
-
 .product-card.clicked {
-    border-color: #667eea;
-    background: #e6fffa;
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    border-color: var(--header-bg);
+    background: var(--card-hover);
+    box-shadow: var(--card-shadow);
 }
-
 .product-name {
     font-size: 1.3rem;
     font-weight: bold;
     margin-bottom: 8px;
-    color: #2d3748;
+    color: var(--main-text);
 }
-
 .product-category {
     display: inline-block;
-    background: #667eea;
-    color: white;
+    background: var(--category-bg);
+    color: var(--category-text);
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
     margin-bottom: 10px;
 }
-
 .product-price {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #38a169;
+    color: var(--price);
     margin-bottom: 8px;
 }
-
 .product-description {
-    color: #4a5568;
+    color: var(--desc);
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
-
 .product-rating {
     display: flex;
     align-items: center;
     gap: 5px;
 }
-
 .rating-stars {
-    color: #fbbf24;
+    color: var(--star);
 }
-
 .recommendation-reason {
-    background: #edf2f7;
+    background: var(--recommend-bg);
     padding: 8px 12px;
     border-radius: 8px;
     font-size: 0.8rem;
-    color: #4a5568;
+    color: var(--recommend-text);
     margin-top: 10px;
     font-style: italic;
 }
-
 .loading {
     text-align: center;
     padding: 40px;
-    color: #4a5568;
+    color: var(--loading);
 }
-
 .loading::after {
     content: '';
     display: inline-block;
     width: 20px;
     height: 20px;
-    border: 2px solid #667eea;
+    border: 2px solid var(--header-bg);
     border-radius: 50%;
     border-top-color: transparent;
     animation: spin 1s linear infinite;
     margin-left: 10px;
 }
-
 @keyframes spin {
     to {
         transform: rotate(360deg);
     }
 }
-
 .error {
-    background: #fed7d7;
-    color: #c53030;
+    background: var(--error-bg);
+    color: var(--error-text);
     padding: 15px;
     border-radius: 8px;
     margin: 20px 0;
     text-align: center;
 }
-
 @media (max-width: 768px) {
     .products-grid, .recommendations-grid {
         grid-template-columns: 1fr;
     }
-    
     header h1 {
         font-size: 2rem;
     }
-    
     .container {
         padding: 10px;
     }
 }
+.main-header {
+    background: var(--header-bg) !important;
+    color: var(--header-text) !important;
+}
+.main-footer {
+    background: var(--footer-bg) !important;
+    color: var(--footer-text) !important;
+}
+.main-footer a {
+    color: var(--footer-link) !important;
+}
     </style>
 </head>
 <body>
-    <header class="main-header" style="width:100%;position:fixed;top:0;left:0;z-index:1000;background:#667eea;color:white;padding:18px 0;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.7rem;letter-spacing:1px;">
+    <header class="main-header" id="main-header" style="width:100%;position:fixed;top:0;left:0;z-index:1000;background:var(--header-bg);color:var(--header-text);padding:18px 0;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.7rem;letter-spacing:1px;transition: top 0.3s;">
         <span style="font-weight:bold;">Real-Time Product Recommendations</span>
-        <span style="font-size:1.1rem;margin-left:18px;font-weight:normal;opacity:0.85;">| ibn zohr</span>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" style="position:absolute;right:24px;top:16px;background:var(--header-bg);color:var(--header-text);border:1px solid var(--header-text);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.3rem;transition:background 0.2s;">🌙</button>
     </header>
     <div style="height:70px;"></div> <!-- Spacer for fixed header -->
     <div class="container">
@@ -199,7 +232,7 @@ header p {
                 <div id="products-grid" class="products-grid">
                     <!-- Products will be loaded here -->
                 </div>
-                <button id="show-more-btn" style="display:none; margin: 20px auto 0; padding: 10px 30px; border-radius: 8px; background: #667eea; color: white; border: none; font-size: 1rem; cursor: pointer;">Show More</button>
+                <div id="pagination-controls" style="text-align:center;margin-top:20px;"></div>
             </div>
             <div class="recommendations-section" id="recommendations-section" style="display: none;">
                 <h2>Recommendations</h2>
@@ -226,24 +259,34 @@ header p {
                     <button type="submit" style="background:#667eea;color:white;padding:6px 18px;border:none;border-radius:6px;cursor:pointer;font-size:1rem;">Submit</button>
                 </form>
                 <div id="rate-us-message" style="margin-top:10px;color:#38a169;font-weight:bold;display:none;"></div>
+                <div id="ratings-list" style="margin-top:24px;text-align:left;max-width:400px;margin-left:auto;margin-right:auto;"></div>
             </section>
         </main>
     </div>
-    <footer class="main-footer" style="width:100%;background:#4a5568;color:white;text-align:center;padding:18px 0;position:fixed;left:0;bottom:0;z-index:1000;font-size:1rem;box-shadow:0 -2px 8px rgba(0,0,0,0.08);">
-        <div>&copy; 2024 Real-Time Recommendation System. All rights reserved.</div>
+    <footer class="main-footer" style="width:100%;background:#4a5568;color:white;text-align:center;padding:18px 0;font-size:1rem;box-shadow:0 -2px 8px rgba(0,0,0,0.08);margin-top:40px;">
+        <div>&copy; 2025 Real-Time Recommendation System. All rights reserved.</div>
         <div style="margin-top:6px;font-size:0.98rem;">
-            Contact: <a href="mailto:contact@ibnzohr.ma" style="color:#e2e8f0;text-decoration:underline;">contact@ibnzohr.ma</a> |
-            Tel: <a href="tel:+212600000000" style="color:#e2e8f0;text-decoration:underline;">+212 6 00 00 00 00</a>
+            Contact: <a href="mailto:contact@ibnzohr.ma" style="color:#e2e8f0;text-decoration:underline;">layyouness@gmail.com</a> 
         </div>
     </footer>
-    <div style="height:60px;"></div> <!-- Spacer for fixed footer -->
+    <div id="product-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);z-index:2000;align-items:center;justify-content:center;">
+        <div id="product-modal-content" style="background:#fff;border-radius:14px;max-width:520px;width:95vw;padding:28px 24px;box-shadow:0 8px 32px rgba(102,126,234,0.18);position:relative;">
+            <button id="close-modal-btn" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.7rem;cursor:pointer;color:#667eea;">&times;</button>
+            <div id="modal-product-details"></div>
+            <div id="modal-trending" style="margin-top:28px;"></div>
+            <div id="modal-similar" style="margin-top:22px;"></div>
+        </div>
+    </div>
     <script>
 class RecommendationApp {
     constructor() {
         this.products = [];
         this.filteredProducts = [];
         this.selectedProduct = null;
-        this.productsToShow = 6;
+        this.currentPage = 1;
+        this.pageSize = 6;
+        this.totalProducts = 0;
+        this.searchQuery = '';
         this.init();
     }
     
@@ -252,15 +295,19 @@ class RecommendationApp {
         this.setupEventListeners();
     }
     
-    async loadProducts() {
+    async loadProducts(page = 1) {
         try {
-            const response = await fetch('/api/products');
+            const searchParam = this.searchQuery ? `&search=${encodeURIComponent(this.searchQuery)}` : '';
+            const response = await fetch(`/api/products?page=${page}&page_size=${this.pageSize}${searchParam}`);
             const data = await response.json();
             
             if (data.status === 'success') {
                 this.products = data.products;
-                this.filteredProducts = this.products;
+                this.totalProducts = data.total;
+                this.currentPage = data.page;
+                this.pageSize = data.page_size;
                 this.renderProducts();
+                this.renderPaginationControls();
             } else {
                 this.showError('Failed to load products');
             }
@@ -271,21 +318,42 @@ class RecommendationApp {
     
     renderProducts() {
         const productsGrid = document.getElementById('products-grid');
-        const showMoreBtn = document.getElementById('show-more-btn');
         productsGrid.innerHTML = '';
-        
-        const productsToDisplay = this.filteredProducts.slice(0, this.productsToShow);
-        productsToDisplay.forEach(product => {
+        if (this.products.length === 0) {
+            productsGrid.innerHTML = '<div class="error">No products found</div>';
+            return;
+        }
+        this.products.forEach(product => {
             const productCard = this.createProductCard(product);
             productsGrid.appendChild(productCard);
         });
-        
-        // Show or hide the Show More button
-        if (this.filteredProducts.length > this.productsToShow) {
-            showMoreBtn.style.display = 'block';
-        } else {
-            showMoreBtn.style.display = 'none';
+    }
+    
+    renderPaginationControls() {
+        const controls = document.getElementById('pagination-controls');
+        if (!controls) return;
+        const totalPages = Math.ceil(this.totalProducts / this.pageSize);
+        if (totalPages <= 1) {
+            controls.innerHTML = '';
+            return;
         }
+        let html = '';
+        html += `<button ${this.currentPage === 1 ? 'disabled' : ''} data-page="${this.currentPage - 1}" style="margin:0 6px;padding:6px 14px;border-radius:6px;border:none;background:#667eea;color:white;cursor:pointer;">Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button ${i === this.currentPage ? 'disabled' : ''} data-page="${i}" style="margin:0 2px;padding:6px 12px;border-radius:6px;border:none;${i === this.currentPage ? 'background:#38a169;color:white;' : 'background:#e2e8f0;color:#333;'}cursor:pointer;">${i}</button>`;
+        }
+        html += `<button ${this.currentPage === totalPages ? 'disabled' : ''} data-page="${this.currentPage + 1}" style="margin:0 6px;padding:6px 14px;border-radius:6px;border:none;background:#667eea;color:white;cursor:pointer;">Next</button>`;
+        controls.innerHTML = html;
+        // Add event listeners
+        controls.querySelectorAll('button[data-page]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const page = parseInt(e.target.getAttribute('data-page'));
+                if (!isNaN(page) && page !== this.currentPage) {
+                    this.currentPage = page;
+                    this.loadProducts(page);
+                }
+            });
+        });
     }
     
     createProductCard(product) {
@@ -293,10 +361,9 @@ class RecommendationApp {
         card.className = 'product-card';
         card.dataset.productId = product.id;
         card.dataset.category = product.category;
-        
         const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
-        
         card.innerHTML = `
+            <img src="${product.image_url}" alt="${product.name}" style="width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:10px;">
             <div class="product-name">${product.name}</div>
             <div class="product-category">${product.category}</div>
             <div class="product-price">$${product.price}</div>
@@ -306,9 +373,9 @@ class RecommendationApp {
                 <span>(${product.rating})</span>
             </div>
         `;
-        
-        card.addEventListener('click', () => this.handleProductClick(product));
-        
+        card.addEventListener('click', (e) => {
+            this.handleProductClick(product);
+        });
         return card;
     }
     
@@ -391,10 +458,9 @@ class RecommendationApp {
         const product = recommendation.product;
         const card = document.createElement('div');
         card.className = 'recommendation-card';
-        
         const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
-        
         card.innerHTML = `
+            <img src="${product.image_url}" alt="${product.name}" style="width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:10px;">
             <div class="product-name">${product.name}</div>
             <div class="product-category">${product.category}</div>
             <div class="product-price">$${product.price}</div>
@@ -405,9 +471,9 @@ class RecommendationApp {
             </div>
             <div class="recommendation-reason">${recommendation.reason}</div>
         `;
-        
-        card.addEventListener('click', () => this.handleProductClick(product));
-        
+        card.addEventListener('click', (e) => {
+            this.handleProductClick(product);
+        });
         return card;
     }
     
@@ -434,31 +500,38 @@ class RecommendationApp {
         const searchInput = document.getElementById('product-search');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
-                this.filterProducts(e.target.value);
+                this.searchQuery = e.target.value;
+                this.currentPage = 1;
+                this.loadProducts(1);
             });
         }
-        // Show More button event
-        const showMoreBtn = document.getElementById('show-more-btn');
-        if (showMoreBtn) {
-            showMoreBtn.addEventListener('click', () => {
-                this.productsToShow += 6;
-                this.renderProducts();
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        function setDarkMode(enabled) {
+            if (enabled) {
+                document.body.classList.add('dark-mode');
+                if (darkModeToggle) darkModeToggle.textContent = '☀️';
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (darkModeToggle) darkModeToggle.textContent = '🌙';
+            }
+        }
+        function getDarkModePref() {
+            return localStorage.getItem('darkMode') === 'true';
+        }
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', function() {
+                const enabled = !document.body.classList.contains('dark-mode');
+                setDarkMode(enabled);
+                localStorage.setItem('darkMode', enabled);
             });
         }
+        setDarkMode(getDarkModePref());
     }
     
     filterProducts(query) {
-        query = query.trim().toLowerCase();
-        if (!query) {
-            this.filteredProducts = this.products;
-        } else {
-            this.filteredProducts = this.products.filter(product =>
-                product.name.toLowerCase().includes(query) ||
-                product.category.toLowerCase().includes(query)
-            );
-        }
-        this.productsToShow = 6;
-        this.renderProducts();
+        // No longer needed, handled by backend
     }
 }
 
@@ -469,7 +542,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const rateMsg = document.getElementById('rate-us-message');
     const starRating = document.getElementById('star-rating');
     const ratingInput = document.getElementById('rating');
+    const ratingsList = document.getElementById('ratings-list');
     let selectedRating = 0;
+    let ratings = [];
+    function getRandomUsername() {
+        const names = ["Alex", "Sam", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Jamie", "Drew", "Skyler", "Avery", "Quinn", "Cameron", "Reese", "Parker", "Rowan", "Emerson", "Finley", "Harper", "Jules"];
+        const name = names[Math.floor(Math.random() * names.length)];
+        const num = Math.floor(1000 + Math.random() * 9000);
+        return name + num;
+    }
+    function renderRatings() {
+        if (!ratingsList) return;
+        if (ratings.length === 0) {
+            ratingsList.innerHTML = '<div style="color:#4a5568;opacity:0.7;font-style:italic;">No ratings yet.</div>';
+            return;
+        }
+        ratingsList.innerHTML = ratings.map(r => `
+            <div style="background:#fff;border-radius:8px;padding:12px 14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(102,126,234,0.06);">
+                <div style="font-weight:bold;color:#667eea;">${r.username} <span style="color:#fbbf24;">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div>
+                <div style="margin:6px 0 0 0;color:#4a5568;">${r.comment}</div>
+            </div>
+        `).join('');
+    }
     if (starRating) {
         const stars = starRating.querySelectorAll('.star');
         stars.forEach(star => {
@@ -513,6 +607,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 rateMsg.style.display = 'block';
                 return;
             }
+            const username = getRandomUsername();
+            ratings.unshift({ rating: parseInt(rating), comment, username });
+            renderRatings();
             rateMsg.textContent = `Thank you for rating us ${rating} star${rating > 1 ? 's' : ''}!`;
             rateMsg.style.color = '#38a169';
             rateMsg.style.display = 'block';
@@ -524,6 +621,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    renderRatings();
+
+    // Hide header on scroll down, show on scroll up
+    let lastScrollY = window.scrollY;
+    const mainHeader = document.getElementById('main-header');
+    window.addEventListener('scroll', function() {
+        if (!mainHeader) return;
+        if (window.scrollY > lastScrollY && window.scrollY > 60) {
+            // Scrolling down
+            mainHeader.style.top = '-80px';
+        } else {
+            // Scrolling up
+            mainHeader.style.top = '0';
+        }
+        lastScrollY = window.scrollY;
+    });
 });
     </script>
 </body>

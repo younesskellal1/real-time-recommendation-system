@@ -15,14 +15,12 @@ class KafkaEventConsumer:
         )
         self.logger = logging.getLogger(__name__)
         self.running = False
-    
     def start_consuming(self, callback):
         self.running = True
         thread = Thread(target=self._consume_messages, args=(callback,))
         thread.daemon = True
         thread.start()
         return thread
-    
     def _consume_messages(self, callback):
         try:
             for message in self.consumer:

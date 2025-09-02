@@ -34,3 +34,5 @@ services:
       - REDIS_HOST=redis
     volumes:
       - .:/app
+
+    
